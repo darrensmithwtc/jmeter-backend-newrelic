@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.darrensmithwtc</groupId>
     <artifactId>jmeter.backendlistener.newrelic</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>A JMeter plug-in that enables you to send test results to NewRelic.</description>
@@ -36,6 +36,7 @@
         <connection>scm:git:git@github.com:darrensmithwtc/jmeter-backend-newrelic.git</connection>
         <developerConnection>scm:git:ssh://github.com/darrensmithwtc/jmeter-backend-newrelic.git</developerConnection>
         <url>https://github.com/darrensmithwtc/jmeter-backend-newrelic</url>
+        <tag>jmeter.backendlistener.newrelic-0.0.2</tag>
     </scm>
 
     <properties>
@@ -129,27 +130,7 @@
     </distributionManagement>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                        <configuration>
-                            <!-- Prevent `gpg` from using pinentry programs -->
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
