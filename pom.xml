@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.darrensmithwtc</groupId>
     <artifactId>jmeter.backendlistener.newrelic</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>A JMeter plug-in that enables you to send test results to NewRelic.</description>
@@ -121,13 +121,10 @@
         </dependency>
     </dependencies>
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>github</id>
+            <name>GitHub</name>
+            <url>https://maven.pkg.github.com/darrensmithwtc/jmeter-backend-newrelic/</url>
         </repository>
     </distributionManagement>
     <build>

@@ -41,6 +41,9 @@ public class NewRelicBackendClient extends AbstractBackendListenerClient {
     private static final String KEY_HEADERS_PREFIX = "aih.";
     private static final String KEY_RESPONSE_HEADERS = "responseHeaders";
     private static final String KEY_METRIC_BATCH_SIZE = "metricBatchSize";
+    private static final String KEY_CLIENT_NAME = "clientName";
+    private static final String KEY_ENVIRONMENT_NAME = "environment";
+    private static final String KEY_METRIC_NAME = "metricName";
 
     /**
      * Default argument values.
@@ -50,6 +53,9 @@ public class NewRelicBackendClient extends AbstractBackendListenerClient {
     private static final String DEFAULT_SAMPLERS_LIST = "";
     private static final boolean DEFAULT_USE_REGEX_FOR_SAMPLER_LIST = false;
     private static final String DEFAULT_METRIC_BATCH_SIZE = "10";
+    private static final String DEFAULT_METRIC_NAME = "loadtest.result";
+    private static final String DEFAULT_CLIENT_NAME = "unknown";
+    private static final String DEFAULT_ENVIRONMENT_NAME = "unknown";
 
     /**
      * Separator for samplers list.
@@ -57,17 +63,17 @@ public class NewRelicBackendClient extends AbstractBackendListenerClient {
     private static final String SEPARATOR = ";";
 
     /**
+     * Metric name
+     */
+    private String metricName;
+
+    /**
      * Name of the test.
      */
     private String testName;
 
     /**
-     * Licence Key
-     */
-    private String licenseKey;
-
-    /**
-     * Metric BAtch Size
+     * Metric Batch Size
      */
     private Integer metricBatchSize;
 
@@ -125,6 +131,9 @@ public class NewRelicBackendClient extends AbstractBackendListenerClient {
         Arguments arguments = new Arguments();
         arguments.addArgument(KEY_TEST_NAME, DEFAULT_TEST_NAME);
         arguments.addArgument(KEY_CONNECTION_STRING, DEFAULT_CONNECTION_STRING);
+        arguments.addArgument(KEY_METRIC_NAME, DEFAULT_METRIC_NAME);
+        arguments.addArgument(KEY_CLIENT_NAME, DEFAULT_CLIENT_NAME);
+        arguments.addArgument(KEY_ENVIRONMENT_NAME, DEFAULT_ENVIRONMENT_NAME);
         arguments.addArgument(KEY_LICENCE_KEY, "");
         arguments.addArgument(KEY_SAMPLERS_LIST, DEFAULT_SAMPLERS_LIST);
         arguments.addArgument(KEY_USE_REGEX_FOR_SAMPLER_LIST, Boolean.toString(DEFAULT_USE_REGEX_FOR_SAMPLER_LIST));
@@ -135,10 +144,12 @@ public class NewRelicBackendClient extends AbstractBackendListenerClient {
 
     @Override
     public void setupTest(BackendListenerContext context) throws Exception {
+        metricName = context.getParameter(KEY_METRIC_NAME, DEFAULT_METRIC_NAME);
         testName = context.getParameter(KEY_TEST_NAME, DEFAULT_TEST_NAME);
         metricBatchSize = Integer.parseInt(context.getParameter(KEY_METRIC_BATCH_SIZE, DEFAULT_METRIC_BATCH_SIZE));
-        licenseKey = context.getParameter(KEY_LICENCE_KEY);
+
         samplersList = context.getParameter(KEY_SAMPLERS_LIST, DEFAULT_SAMPLERS_LIST).trim();
+        String licenseKey = context.getParameter(KEY_LICENCE_KEY);
         String connectionString = context.getParameter(KEY_CONNECTION_STRING);
         useRegexForSamplerList = context.getBooleanParameter(KEY_USE_REGEX_FOR_SAMPLER_LIST,
                 DEFAULT_USE_REGEX_FOR_SAMPLER_LIST);
@@ -161,7 +172,7 @@ public class NewRelicBackendClient extends AbstractBackendListenerClient {
         sender = MetricBatchSender
                 .create(factory.configureWith(licenseKey).useLicenseKey(true).endpoint(endpoint).build());
 
-        metricBuffer = new MetricBuffer(getCommonAttributes());
+        metricBuffer = new MetricBuffer(getCommonAttributes(context));
 
         samplersToFilter = new HashSet<String>();
         if (!useRegexForSamplerList) {
@@ -173,9 +184,12 @@ public class NewRelicBackendClient extends AbstractBackendListenerClient {
         }
     }
 
-    private Attributes getCommonAttributes() {
+    private Attributes getCommonAttributes(BackendListenerContext context) {
         Attributes defaultProperties = new Attributes();
         defaultProperties.put("ingestProvider", "JMETER");
+        defaultProperties.put(KEY_CLIENT_NAME, context.getParameter(KEY_CLIENT_NAME));
+        defaultProperties.put(KEY_ENVIRONMENT_NAME, context.getParameter(KEY_ENVIRONMENT_NAME));
+
         return defaultProperties;
     }
 
@@ -215,7 +229,7 @@ public class NewRelicBackendClient extends AbstractBackendListenerClient {
 
         Long duration = sr.getTime();
 
-        Gauge metric = new Gauge("wtc.loadtest.result", duration, System.currentTimeMillis(), properties);
+        Gauge metric = new Gauge(metricName, duration, System.currentTimeMillis(), properties);
 
         metricBuffer.addMetric(metric);
 

@@ -1,6 +1,5 @@
 package io.github.darrensmithwtc.jmeter.backendlistener.newrelic;
 
-// import com.microsoft.applicationinsights.TelemetryClient;
 import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.samplers.SampleResult;
 import org.apache.jmeter.visualizers.backend.BackendListenerContext;
@@ -16,6 +15,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import com.newrelic.telemetry.metrics.MetricBatchSender;
+import com.newrelic.telemetry.metrics.MetricBuffer;
+
 import static junit.framework.TestCase.fail;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -24,7 +26,10 @@ import static org.mockito.Mockito.*;
 public class TestNewRelicBackendClient {
 
     @Mock
-    // private TelemetryClient telemetryClient;
+    private MetricBatchSender sender;
+
+    @Mock
+    private MetricBuffer metricBuffer;
 
     @InjectMocks
     private final NewRelicBackendClient client = new NewRelicBackendClient();
@@ -38,6 +43,7 @@ public class TestNewRelicBackendClient {
         context = new BackendListenerContext(args);
         Whitebox.setInternalState(client, "testName", "test-1");
         Whitebox.setInternalState(client, "samplersToFilter", new HashSet<>());
+        Whitebox.setInternalState(client, "licenceKey", "euABCXYZ");
     }
 
     @Test
@@ -48,7 +54,7 @@ public class TestNewRelicBackendClient {
 
     @Test
     public void testHandleSampleResults() {
-        // doNothing().when(telemetryClient).trackRequest(any());
+        doNothing().when(sender);
 
         SampleResult sr = new SampleResult();
         List<SampleResult> list = new ArrayList<SampleResult>();
