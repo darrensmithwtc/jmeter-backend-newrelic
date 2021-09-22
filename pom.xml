@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.darrensmithwtc</groupId>
     <artifactId>jmeter.backendlistener.newrelic</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>A JMeter plug-in that enables you to send test results to NewRelic.</description>
