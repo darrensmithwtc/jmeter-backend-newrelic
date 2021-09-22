@@ -26,29 +26,3 @@ jobs:
 
       - name: Build
         run: mvn package
-  release:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2.3.4
-
-      - name: Set up JDK 1.8
-        uses: actions/setup-java@v2.1.0
-        with:
-          java-version: 8
-          distribution: zulu
-          java-package: jdk
-          server-id: github
-
-      - name: Maven version
-        run: mvn -v
-      - name: Configure Git user
-        run: |
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
-
-      - name: Publish JAR
-        run: mvn -B release:prepare release:perform
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
